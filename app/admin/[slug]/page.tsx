@@ -1,8 +1,8 @@
 import { TenantForm } from "@/components/admin/tenant-form";
-import { requireAdmin } from "@/lib/admin/auth";
+import { canEdit, requireAccess } from "@/lib/admin/access";
 import { getTenantBySlug } from "@/lib/tenant/store";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -11,8 +11,9 @@ export default async function EditTenant({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  await requireAdmin();
+  const access = await requireAccess();
   const { slug } = await params;
+  if (!canEdit(access, slug)) redirect("/admin");
   const tenant = await getTenantBySlug(slug);
   if (!tenant) notFound();
 

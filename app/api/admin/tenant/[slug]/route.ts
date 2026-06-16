@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { isAdmin } from "@/lib/admin/auth";
+import { canEdit, getAccess } from "@/lib/admin/access";
 import { getTenantBySlug, saveTenant } from "@/lib/tenant/store";
 import type { Tenant } from "@/lib/tenant/types";
 
@@ -7,10 +7,11 @@ export async function GET(
   _request: Request,
   { params }: { params: Promise<{ slug: string }> }
 ) {
-  if (!(await isAdmin())) {
+  const { slug } = await params;
+  const access = await getAccess();
+  if (!access || !canEdit(access, slug)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const { slug } = await params;
   const tenant = await getTenantBySlug(slug);
   if (!tenant) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -22,11 +23,12 @@ export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ slug: string }> }
 ) {
-  if (!(await isAdmin())) {
+  const { slug } = await params;
+  const access = await getAccess();
+  if (!access || !canEdit(access, slug)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { slug } = await params;
   let body: Tenant;
   try {
     body = (await request.json()) as Tenant;

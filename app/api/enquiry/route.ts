@@ -111,9 +111,9 @@ export async function POST(request: Request) {
     }
 
     const tenant =
-      (data.tenant && getTenantBySlug(data.tenant)) ||
-      getTenantByHost(request.headers.get("host")) ||
-      getDefaultTenant();
+      (data.tenant ? await getTenantBySlug(data.tenant) : null) ||
+      (await getTenantByHost(request.headers.get("host"))) ||
+      (await getDefaultTenant());
 
     const receivedAt = new Date().toISOString();
     console.log(

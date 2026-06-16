@@ -64,3 +64,11 @@ create table if not exists bookings (
 
 create index if not exists bookings_tenant_idx on bookings(tenant_id, start_date);
 create index if not exists tenant_domains_hostname_idx on tenant_domains(hostname);
+
+-- Row-Level Security: lock every table down to server-side access only.
+-- The app reads with the service_role key (which bypasses RLS), so no policies
+-- are needed yet. This blocks the public anon key from reading any data.
+-- When the admin portal adds sitter logins, we'll add per-tenant policies here.
+alter table tenants enable row level security;
+alter table tenant_domains enable row level security;
+alter table bookings enable row level security;

@@ -13,16 +13,11 @@ export async function GET(request: Request) {
   const host = request.headers.get("host");
 
   const tenant =
-    (override && getTenantBySlug(override)) ||
-    (slugHeader && getTenantBySlug(slugHeader)) ||
-    getTenantByHost(host) ||
-    getDefaultTenant();
+    (override ? await getTenantBySlug(override) : null) ||
+    (slugHeader ? await getTenantBySlug(slugHeader) : null) ||
+    (await getTenantByHost(host)) ||
+    (await getDefaultTenant());
 
-  const bookings = getBookingsForTenant(tenant.slug).map((b) => ({
-    start: b.start,
-    end: b.end,
-    status: b.status,
-  }));
-
+  const bookings = await getBookingsForTenant(tenant.slug);
   return NextResponse.json({ tenant: tenant.slug, bookings });
 }

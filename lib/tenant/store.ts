@@ -1,5 +1,5 @@
 import { DEFAULT_TENANT_SLUG, SEED_TENANTS } from "@/lib/tenant/seed";
-import { rowToTenant, type TenantRow } from "@/lib/tenant/mapping";
+import { rowToTenant, tenantToRow, type TenantRow } from "@/lib/tenant/mapping";
 import { getSupabase } from "@/lib/supabase";
 import type { Tenant } from "@/lib/tenant/types";
 
@@ -71,4 +71,30 @@ export async function getTenantByHost(host: string | null | undefined): Promise<
 
 export async function getDefaultTenant(): Promise<Tenant> {
   return (await getTenantBySlug(DEFAULT_TENANT_SLUG)) ?? SEED_TENANTS[0];
+}
+
+/** List all tenants (admin). Falls back to seed when the DB is absent. */
+export async function getAllTenants(): Promise<Tenant[]> {
+  const supabase = getSupabase();
+  if (!supabase) return SEED_TENANTS;
+  try {
+    const { data, error } = await supabase.from("tenants").select("*").order("business_name");
+    if (error || !data) {
+      if (error) console.error("TENANTS_DB_ERROR", error.message);
+      return SEED_TENANTS;
+    }
+    return data.map((r) => rowToTenant(r as TenantRow));
+  } catch (err) {
+    console.error("TENANTS_DB_EXCEPTION", err);
+    return SEED_TENANTS;
+  }
+}
+
+/** Persist a tenant (admin save). Updates the existing row matched by slug. */
+export async function saveTenant(t: Tenant): Promise<{ ok: boolean; error?: string }> {
+  const supabase = getSupabase();
+  if (!supabase) return { ok: false, error: "Database not configured" };
+  const { error } = await supabase.from("tenants").update(tenantToRow(t)).eq("slug", t.slug);
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
 }

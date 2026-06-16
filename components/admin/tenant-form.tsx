@@ -1,6 +1,7 @@
 "use client";
 
 import { DiscountEditor } from "@/components/admin/discount-editor";
+import { ImageUpload } from "@/components/admin/image-upload";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import type { IconName, Tenant } from "@/lib/tenant/types";
@@ -129,7 +130,7 @@ export function TenantForm({ tenant, isOperator }: { tenant: Tenant; isOperator:
               </p>
             )}
           </label>
-          <Field label="Logo image path (upload coming soon)" value={t.branding.logoSrc ?? ""} onChange={(v) => update((d) => { d.branding.logoSrc = v || undefined; })} />
+          <ImageUpload label="Logo" tenantSlug={t.slug} value={t.branding.logoSrc ?? ""} onChange={(v) => update((d) => { d.branding.logoSrc = v || undefined; })} />
           <label className="space-y-1 block">
             <span className="text-sm font-medium">Status</span>
             <select className={inputCls} value={t.status} onChange={(e) => update((d) => { d.status = e.target.value as Tenant["status"]; })}>
@@ -197,7 +198,7 @@ export function TenantForm({ tenant, isOperator }: { tenant: Tenant; isOperator:
         <div className="space-y-3 border-t pt-4">
           <h3 className="text-sm font-semibold text-primary">About</h3>
           <Field label="Heading" value={t.about.heading} onChange={(v) => update((d) => { d.about.heading = v; })} />
-          <Field label="Photo path (upload coming soon)" value={t.about.imageSrc ?? ""} onChange={(v) => update((d) => { d.about.imageSrc = v || undefined; })} />
+          <ImageUpload label="About photo" tenantSlug={t.slug} value={t.about.imageSrc ?? ""} onChange={(v) => update((d) => { d.about.imageSrc = v || undefined; })} />
           <p className="text-sm font-medium">Paragraphs</p>
           {t.about.paragraphs.map((p, i) => (
             <div key={i} className="flex items-start gap-2">

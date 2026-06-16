@@ -76,12 +76,18 @@ export interface Feature {
   description: string;
 }
 
+/** Where a tenant's reviews come from. */
+export type ReviewSource = "rover" | "ths" | "google";
+
 export interface Review {
   name: string;
-  initials: string;
-  date: string;
-  rating: number;
   text: string;
+  /** Link to this specific review on the source platform. */
+  link?: string;
+  /** Optional — derived from the name when absent. */
+  initials?: string;
+  date?: string;
+  rating?: number;
 }
 
 export interface Faq {
@@ -153,9 +159,8 @@ export interface Tenant {
   reviews: {
     heading: string;
     subheading: string;
-    /** Link to an external review profile (e.g. Rover). Optional. */
-    externalUrl?: string;
-    externalLabel?: string;
+    /** Which platform the reviews are from (drives the verified-reviews label). */
+    source?: ReviewSource;
     items: Review[];
   };
 

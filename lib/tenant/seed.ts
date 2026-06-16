@@ -98,8 +98,7 @@ const happyAtHomePets: Tenant = {
     heading: "What Pet Parents Say",
     subheading:
       "Don't just take our word for it — here's what happy pet owners have to say about their experience.",
-    externalUrl: "https://www.rover.com/sit/marcuw73275",
-    externalLabel: "Verified Reviews from Rover.com",
+    source: "rover",
     items: [
       {
         name: "Caitlin C.",

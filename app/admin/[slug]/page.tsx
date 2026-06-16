@@ -33,7 +33,7 @@ export default async function EditTenant({
             </p>
           </div>
         </div>
-        <TenantForm tenant={tenant} />
+        <TenantForm tenant={tenant} isOperator={access.isOperator} />
       </div>
     </main>
   );

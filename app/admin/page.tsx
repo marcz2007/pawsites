@@ -14,27 +14,18 @@ export default async function AdminHome() {
     ? all
     : all.filter((t) => access.tenantSlugs?.includes(t.slug));
 
-  const logoutAction = access.isOperator && !access.user ? "/api/admin/logout" : "/api/auth/logout";
-
   return (
     <main className="min-h-screen bg-muted/30 p-6 md:p-10">
       <div className="max-w-3xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">
-              {access.isOperator ? "Tenants" : "Your site"}
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              {access.isOperator
-                ? `${tenants.length} business${tenants.length === 1 ? "" : "es"}`
-                : access.user?.email}
-            </p>
-          </div>
-          <form action={logoutAction} method="post">
-            <button className="text-sm text-muted-foreground hover:text-foreground underline">
-              Log out
-            </button>
-          </form>
+        <div>
+          <h1 className="text-2xl font-bold">
+            {access.isOperator ? "Your sites" : "Your site"}
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            {access.isOperator
+              ? `${tenants.length} site${tenants.length === 1 ? "" : "s"}`
+              : access.user?.email}
+          </p>
         </div>
 
         <div className="space-y-3">

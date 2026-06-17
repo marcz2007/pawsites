@@ -98,3 +98,17 @@ export async function saveTenant(t: Tenant): Promise<{ ok: boolean; error?: stri
   if (error) return { ok: false, error: error.message };
   return { ok: true };
 }
+
+/** Create a brand-new tenant row. Fails clearly if the slug is taken. */
+export async function createTenant(t: Tenant): Promise<{ ok: boolean; error?: string }> {
+  const supabase = getSupabase();
+  if (!supabase) return { ok: false, error: "Database not configured" };
+  const { error } = await supabase.from("tenants").insert(tenantToRow(t));
+  if (error) {
+    if (error.code === "23505" || /duplicate|unique/i.test(error.message)) {
+      return { ok: false, error: "That subdomain is already taken" };
+    }
+    return { ok: false, error: error.message };
+  }
+  return { ok: true };
+}

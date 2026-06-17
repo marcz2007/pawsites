@@ -1,3 +1,4 @@
+import { CreateTenantPanel } from "@/components/admin/create-tenant-panel";
 import { InvitePanel } from "@/components/admin/invite-panel";
 import { Card } from "@/components/ui/card";
 import { requireAccess } from "@/lib/admin/access";
@@ -63,7 +64,12 @@ export default async function AdminHome() {
           ) : null}
         </div>
 
-        {access.isOperator ? <InvitePanel tenants={all.map((t) => ({ slug: t.slug, name: t.businessName }))} /> : null}
+        {access.isOperator ? (
+          <>
+            <CreateTenantPanel />
+            <InvitePanel tenants={all.map((t) => ({ slug: t.slug, name: t.businessName }))} />
+          </>
+        ) : null}
       </div>
     </main>
   );

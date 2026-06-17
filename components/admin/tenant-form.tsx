@@ -64,7 +64,7 @@ function RemoveButton({ onClick }: { onClick: () => void }) {
   );
 }
 
-export function TenantForm({ tenant, isOperator }: { tenant: Tenant; isOperator: boolean }) {
+export function TenantForm({ tenant, isOperator, previewUrl }: { tenant: Tenant; isOperator: boolean; previewUrl: string }) {
   const [t, setT] = useState<Tenant>(tenant);
   const [keywords, setKeywords] = useState(tenant.seo.keywords.join(", "));
   const [state, setState] = useState<"idle" | "saving" | "saved" | "error">("idle");
@@ -278,6 +278,9 @@ export function TenantForm({ tenant, isOperator }: { tenant: Tenant; isOperator:
 
       <div className="sticky bottom-4 flex items-center gap-3 bg-background/80 backdrop-blur p-3 rounded-xl border">
         <Button onClick={save} disabled={state === "saving"}>{state === "saving" ? "Saving…" : "Save changes"}</Button>
+        <Button asChild variant="outline">
+          <a href={previewUrl} target="_blank" rel="noreferrer">View live site ↗</a>
+        </Button>
         {state === "saved" ? <span className="text-sm text-emerald-700">Saved ✓</span> : null}
         {state === "error" ? <span className="text-sm text-red-600">{error}</span> : null}
       </div>

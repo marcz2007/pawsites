@@ -3,13 +3,22 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import type React from "react";
 import "./globals.css";
-import { getCurrentTenant } from "@/lib/tenant/server";
+import {
+  HOME_DOMAIN_SHOWS_MARKETING,
+  MARKETING_BRAND_PRIMARY,
+  marketingMetadata,
+} from "@/lib/marketing/content";
+import { resolveTenant } from "@/lib/tenant/server";
+import { getDefaultTenant } from "@/lib/tenant/store";
 
 const geist = Geist({ subsets: ["latin"] });
 
-/** Per-tenant SEO, generated from the resolved tenant. */
+/** Per-tenant SEO, or Pawsites SEO on the home/marketing domain. */
 export async function generateMetadata(): Promise<Metadata> {
-  const tenant = await getCurrentTenant();
+  const resolved = await resolveTenant();
+  if (!resolved && HOME_DOMAIN_SHOWS_MARKETING) return marketingMetadata();
+
+  const tenant = resolved ?? (await getDefaultTenant());
   return {
     title: tenant.seo.title,
     description: tenant.seo.description,
@@ -28,9 +37,14 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const tenant = await getCurrentTenant();
-  // Apply the tenant's brand colour by overriding the --primary design token.
-  const brandStyle = { ["--primary" as string]: tenant.branding.primary } as React.CSSProperties;
+  const resolved = await resolveTenant();
+  const isMarketing = !resolved && HOME_DOMAIN_SHOWS_MARKETING;
+  // Apply the brand colour by overriding the --primary design token: the
+  // tenant's hue for a tenant site, the Pawsites hue on the marketing domain.
+  const primary = isMarketing
+    ? MARKETING_BRAND_PRIMARY
+    : (resolved ?? (await getDefaultTenant())).branding.primary;
+  const brandStyle = { ["--primary" as string]: primary } as React.CSSProperties;
 
   return (
     <html lang="en">

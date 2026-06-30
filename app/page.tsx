@@ -2,13 +2,24 @@ import { About } from "@/components/about";
 import { Faq } from "@/components/faq";
 import { Footer } from "@/components/footer";
 import { Hero } from "@/components/hero";
+import { MarketingHome } from "@/components/marketing/marketing-home";
 import { Pricing } from "@/components/pricing";
 import { Reviews } from "@/components/reviews";
-import { getCurrentTenant } from "@/lib/tenant/server";
+import { HOME_DOMAIN_SHOWS_MARKETING } from "@/lib/marketing/content";
+import { resolveTenant } from "@/lib/tenant/server";
+import { getDefaultTenant } from "@/lib/tenant/store";
 import Script from "next/script";
 
 export default async function Home() {
-  const tenant = await getCurrentTenant();
+  const resolved = await resolveTenant();
+
+  // Home / apex domain (no tenant) → the Pawsites marketing site. Flip
+  // HOME_DOMAIN_SHOWS_MARKETING to revert the apex to the default tenant.
+  if (!resolved && HOME_DOMAIN_SHOWS_MARKETING) {
+    return <MarketingHome />;
+  }
+
+  const tenant = resolved ?? (await getDefaultTenant());
 
   const localBusinessSchema = {
     "@context": "https://schema.org",

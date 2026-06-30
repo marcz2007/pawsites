@@ -30,18 +30,21 @@ export function Footer({ tenant }: { tenant: Tenant }) {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-3xl">
             {contactItems.map(({ icon: Icon, label, value, href }) => (
-              <div key={label} className="flex items-center gap-3 justify-center">
+              <div key={label} className="flex min-w-0 items-center gap-3 justify-center">
                 <span className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-primary shrink-0">
                   <Icon className="h-4 w-4" />
                 </span>
-                <div className="text-left">
+                <div className="min-w-0 text-left">
                   <p className="text-xs uppercase tracking-wide text-muted-foreground/80">{label}</p>
                   {href ? (
-                    <a href={href} className="font-medium text-neutral-900 hover:text-primary transition-colors">
+                    <a
+                      href={href}
+                      className="block break-words font-medium text-neutral-900 hover:text-primary transition-colors"
+                    >
                       {value}
                     </a>
                   ) : (
-                    <p className="font-medium text-neutral-900">{value}</p>
+                    <p className="break-words font-medium text-neutral-900">{value}</p>
                   )}
                 </div>
               </div>

@@ -22,11 +22,13 @@ export const DEMO_LIVE_URL = "https://www.happyathomepets.co.uk";
 export const DEMO_LIVE_HOST = "www.happyathomepets.co.uk";
 
 /**
- * Same-origin source for the embedded live preview. Using `?tenant=` keeps the
- * iframe on the current origin so it works in local dev AND production without
- * depending on the subdomain being reachable from inside the frame.
+ * Source for the embedded live preview — the real Happy at Home Pets site.
+ * It's served from Vercel with no X-Frame-Options/CSP, so it can be framed
+ * cross-origin. We embed the actual production site (not the in-app `?tenant=`
+ * render) so the preview matches what visitors really get, insurance section
+ * and all.
  */
-export const DEMO_PREVIEW_SRC = `/?tenant=${DEMO_TENANT_SLUG}`;
+export const DEMO_PREVIEW_SRC = DEMO_LIVE_URL;
 
 /** Pawsites brand hue, applied to --primary while marketing is shown. */
 export const MARKETING_BRAND_PRIMARY = "oklch(0.55 0.15 160)";
